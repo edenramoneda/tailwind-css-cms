@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+    background-color: #F8F8F8;
+}
+
+.app-name-bg-blue{
+    background-color: #272E40;
+}
+
+input:checked ~ .dot {
+    transform: translateX(100%);
+    background-color: #48bb78;
+  }
