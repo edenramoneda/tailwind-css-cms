@@ -51,7 +51,7 @@ onMounted(() => {
                         </svg>
 
                     </button>
-                    <img src="https://media.discordapp.net/attachments/1140497452512845885/1140497478488166461/Logo.png?width=870&height=182" class="h-14 xxs:h-12 ml-3" alt="App Logo" />
+                    <img src="" class="h-14 xxs:h-12 ml-3" alt="App Logo" />
                 </div>
             
             </div>

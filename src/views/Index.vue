@@ -87,7 +87,7 @@ async function login(e) {
       <div class=" bg-white rounded-lg shadow dark:border dark:border-gray-100 w-auto">
           <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                 <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-                    <img class=" mr-2" src="https://media.discordapp.net/attachments/1140497452512845885/1140497478488166461/Logo.png?width=500&height=100" alt="logo">
+                    <img class=" mr-2" src="" alt="logo">
                 </a>
                 <Form class="w-full" @submit="login" :validation-schema="schema" v-slot="{ errors }">
                   <div>
