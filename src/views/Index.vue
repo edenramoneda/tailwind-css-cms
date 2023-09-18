@@ -1,118 +1,123 @@
 <script setup>
-import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { onMounted,ref, computed,reactive } from 'vue'
-import { loginData,fetchData } from '@/plugins/axiosUtils'; 
-import { Form, Field } from 'vee-validate';
-import * as yup from 'yup';
-import Swal from 'sweetalert2'
-import axios from 'axios';
-
-
-const router = useRouter()
-
-const initForm = {
-    identifier: "",
-    password: "",
-}
-let formData = reactive({...initForm})
-
-const schema = yup.object({
-    identifier: yup.string()
-      .required('Username is required'),
-    password: yup.string().required('Password is required'),
-})
-
-
-async function login(e) {
-
-   await loginData(`api/auth/local`,e).then((result) => {
-        
-      let timerInterval
-
-      const { jwt, user} = result.data
-      localStorage.setItem('userToken', jwt)
-      localStorage.setItem('userData', JSON.stringify({username: user.username, emai: user.email}))
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
-
-      Swal.fire({
-        title: 'Logging in',
-        text: 'Please wait!',
-        timer: 2000,
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading()
-          // const b = Swal.getHtmlContainer().querySelector('b')
-          // timerInterval = setInterval(() => {
-          //   b.textContent = Swal.getTimerLeft()
-          // }, 100)
-        },
-        willClose: () => {
-          clearInterval(timerInterval)
-        }
-      }).then((result) => {
-          if (result.dismiss === Swal.DismissReason.timer) {
-            router.push('/home')
-          }
-      })
-        
-   }).catch(err => {
-
-      if(err.response.status === 500){
-          Swal.fire('Error',
-            err.response.statusText,
-          'error')
-      }else if(err.response.status === 400)
-      {
-          Swal.fire('Error',
-          'Invalid Credentials',
-          'error')
-      }
-      else {
-          Swal.fire('Error',
-          'Something went wrong',
-          'error')
-      }
-        
-  
-   })
-  }
-
-
+import { ref  } from 'vue'
+let open = ref(false)
 </script>
-
 <template>
- 
-  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-     
-      <div class=" bg-white rounded-lg shadow dark:border dark:border-gray-100 w-auto">
-          <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-                    <img class=" mr-2" src="" alt="logo">
+  <div class="flex flex-col items-center justify-center mt-32">
+    <div class="flex flex-col">
+        <!-- Page Scroll Progress -->
+
+
+        <!-- Navbar -->
+        <nav class="flex justify-around py-4 bg-white/80
+            backdrop-blur-md shadow-md w-full
+            fixed top-0 left-0 right-0 z-10 h-24">
+
+            <!-- Logo Container -->
+            <div class="flex items-center">
+                <!-- Logo -->
+                <a class="cursor-pointer">
+                    <h1 class="text-5xl tourista-title text-teal-500">
+                        TOURISTA
+                    </h1>
                 </a>
-                <Form class="w-full" @submit="login" :validation-schema="schema" v-slot="{ errors }">
-                  <div>
-                      <label for="identifier" class="block mb-2 font-medium text-gray-900">Username</label>
-                      <Field class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                        :class="{ 'is-invalid': errors.identifier }" name="identifier"
-                        type="text" v-model="formData.identifier" placeholder="Username">
-                        </Field>
-                            <small class="text-red-500">{{ errors.identifier }}</small>
-                  </div>
-                  <div>
-                      <label for="password" class="block mt-5 mb-2 font-medium text-gray-900">Password</label>
-                      <Field class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                    :class="{ 'is-invalid': errors.password }" name="password"
-                    type="text" v-model="formData.password" placeholder="Password">
-                    </Field>
-                        <small class="text-red-500">{{ errors.password }}</small>
-                  </div>
+            </div>
 
-                  <button 
-                  type="submit" 
-                  class="w-full mt-5 text-white bg-amber-600 hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-md px-5 py-2.5 text-center">Login</button>
-                </Form>
-          </div>
-      </div>
-  </div>
+            <!-- Links Section -->
+            <div class="items-center hidden space-x-8 lg:flex text-lg">
+                <a class="flex text-gray-600 hover:text-teal-600
+                    cursor-pointer transition-colors duration-300">
+                    Home
+                </a>
+
+                <a class="flex text-gray-600 
+                    cursor-pointer transition-colors duration-300 hover:text-teal-600
+                    ">
+                    About Us
+                </a>
+
+                <div class="relative">
+                    <button @click="open = !open" class="px-4 py-2 flex flex-row items-center bg-transparent">
+                    <span class="text-gray-600 cursor-pointer transition-colors duration-300 hover:text-teal-600">Offers</span>
+                    <svg fill="currentColor" viewBox="0 0 20 20" class="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    </button>
+                    
+                    <div :class="open ? 'absolute w-56 mt-2 origin-top-right rounded-md shadow-lg' : 'hidden'">
+                        <div class="px-2 py-2 bg-white rounded-md shadow dark-mode:bg-gray-800">
+                            <a class="text-base block px-4 py-2 mt-2 bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark:text-gray-600 md:mt-0 hover:text-teal-600 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">Travel Package</a>
+                            <a class="text-base whitespace-nowrap block px-4 py-2 mt-2 bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark:text-gray-600 md:mt-0 hover:text-teal-600 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href="#">Transfers and Rentals</a>
+                        </div>
+                    </div>
+                </div>   
+
+                
+                <a class="flex text-gray-600 hover:text-blue-500 hover:text-teal-600
+                    cursor-pointer transition-colors duration-300">
+                    Contact Us
+                </a>
+
+                <button class="rounded-full bg-teal-800 p-3 px-8">
+                    <a class="flex text-gray-600 hover:text-blue-okiokieeok500
+                        cursor-pointer transition-colors duration-300 text-white">
+                        Book Now
+                    </a>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Dummy Scrollable Content -->
+    <div class="flex flex-wrap" style="width: 1000px;">
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+        <div class="bg-orange-200 h-52 w-52 m-5"></div>
+    </div>
+</div>
 </template>
-

@@ -10,7 +10,7 @@ import ActivityImages from '@/views/Activities/Images.vue'
 import Packages from '@/views/Packages/Packages.vue'
 import PackageForm from '@/views/Packages/PackageForm.vue'
 import PackageImages from '@/views/Packages/PackageImages.vue'
-import Index from '@/views/Index.vue'
+import Login from '@/views/Login.vue'
 import ActivityItinerary from '@/views/Activities/Itinerary.vue'
 import ActivityItineraryForm from '@/views/Activities/ItineraryForm.vue'
 import PackageItinerary from '@/views/Packages/Itinerary.vue'
@@ -20,13 +20,19 @@ import Transfers from '@/views/Transfers/Transfers.vue'
 import TransferForm from '@/views/Transfers/Form.vue'
 import TransferImages from '@/views/Transfers/TransferImages.vue'
 import AccountSettings from '@/views/AccountSettings.vue'
+import Index from '@/views/Index.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: '/login',
+      name: '/',
       component: Index
+    },
+    {
+      path: '/login',
+      name: '/login',
+      component: Login
     },
     {
       path: '/home',
@@ -175,30 +181,30 @@ const router = createRouter({
     },
   ]
 })
-router.beforeEach((to, from, next) => {
+// router.beforeEach((to, from, next) => {
     
   
-  const isAuthenticated = localStorage.getItem("userToken") && localStorage.getItem('userData');
+//   const isAuthenticated = localStorage.getItem("userToken") && localStorage.getItem('userData');
 
-    if (to.path === '/' && isAuthenticated) {
-      next('/home');
-    }
+//     if (to.path === '/' && isAuthenticated) {
+//       next('/home');
+//     }
 
-    if(to.matched.some(record => record.meta.requiresAuth)){
+//     if(to.matched.some(record => record.meta.requiresAuth)){
 
-      if(isAuthenticated){
-        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem("userToken")}`;
-        next()
-      }else{
-        next({
-            path: '/'
-          })
+//       if(isAuthenticated){
+//         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem("userToken")}`;
+//         next()
+//       }else{
+//         next({
+//             path: '/'
+//           })
 
-      }
-    }else{
-        next();
-    }
+//       }
+//     }else{
+//         next();
+//     }
 
    
-})
+// })
 export default router
